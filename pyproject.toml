@@ -1,0 +1,21 @@
+[project]
+name = "focus-groups"
+version = "0.1.0"
+description = "Multi-agent scrutiny + deliberation harness for engineering planning"
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "UNLICENSED"}
+authors = [{name = "Gabe Hansen"}]
+dependencies = [
+  "typer>=0.12",
+  "pydantic>=2.7",
+]
+
+[project.scripts]
+focus-groups = "focus_groups.cli:app"
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+addopts = "-q"
