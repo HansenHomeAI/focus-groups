@@ -12,7 +12,8 @@ app = typer.Typer(no_args_is_help=True)
 
 
 def _new_run_id() -> str:
-    return time.strftime("%Y%m%d-%H%M%S")
+    # Include milliseconds to avoid collisions when running prep repeatedly.
+    return time.strftime("%Y%m%d-%H%M%S") + f"-{int((time.time() % 1)*1000):03d}"
 
 
 @app.command()
