@@ -57,9 +57,21 @@ def compile(
         for p in sorted(agents_dir.glob("*/finding.json")):
             findings.append(json.loads(p.read_text(encoding="utf-8")))
 
-    consensus = (run_dir / "deliberation" / "consensus.md").read_text(encoding="utf-8") if (run_dir / "deliberation" / "consensus.md").exists() else ""
-    dissent = (run_dir / "deliberation" / "dissent.md").read_text(encoding="utf-8") if (run_dir / "deliberation" / "dissent.md").exists() else ""
-    oq = (run_dir / "deliberation" / "open_questions.md").read_text(encoding="utf-8") if (run_dir / "deliberation" / "open_questions.md").exists() else ""
+    consensus = (
+        (run_dir / "deliberation" / "consensus.md").read_text(encoding="utf-8")
+        if (run_dir / "deliberation" / "consensus.md").exists()
+        else ""
+    )
+    dissent = (
+        (run_dir / "deliberation" / "dissent.md").read_text(encoding="utf-8")
+        if (run_dir / "deliberation" / "dissent.md").exists()
+        else ""
+    )
+    oq = (
+        (run_dir / "deliberation" / "open_questions.md").read_text(encoding="utf-8")
+        if (run_dir / "deliberation" / "open_questions.md").exists()
+        else ""
+    )
 
     report = {
         "run_dir": str(run_dir),
@@ -71,6 +83,20 @@ def compile(
     out = run_dir / "REPORT.json"
     out.write_text(json.dumps(report, indent=2), encoding="utf-8")
     typer.echo(str(out))
+
+
+@app.command()
+def diff(
+    baseline_report: Path = typer.Argument(..., exists=True, dir_okay=False),
+    improved_report: Path = typer.Argument(..., exists=True, dir_okay=False),
+):
+    """Diff two REPORT.json files using lightweight proxy metrics."""
+    from .diff import diff_reports
+
+    b = json.loads(baseline_report.read_text(encoding="utf-8"))
+    i = json.loads(improved_report.read_text(encoding="utf-8"))
+    d = diff_reports(b, i)
+    typer.echo(json.dumps(d, indent=2))
 
 
 if __name__ == "__main__":
